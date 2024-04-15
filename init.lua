@@ -5,7 +5,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -151,6 +151,8 @@ require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
+  'tpope/vim-fugitive', -- Detect tabstop and shiftwidth automatically
+
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
   -- keys can be used to configure plugin behavior/loading/etc.
@@ -289,6 +291,20 @@ require('lazy').setup({
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
+      vim.keymap.set('n', '<leader>pf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>p', builtin.git_files, { desc = 'Search Git Files' })
+      -- vim.keymap.set('n', '<leader>pws', function()
+      --   local word = vim.fn.expand '<cword>'
+      --   builtin.grep_string { search = word }
+      -- end, { desc = 'Grep for word under cursor' })
+      -- vim.keymap.set('n', '<leader>pWs', function()
+      --   local word = vim.fn.expand '<cWORD>'
+      --   builtin.grep_string { search = word }
+      -- end, { desc = 'Grep for WORD under cursor' })
+      -- vim.keymap.set('n', '<leader>ps', function()
+      --   builtin.grep_string { search = vim.fn.input 'Grep > ' }
+      -- end, { desc = 'Open grep' })
+      -- vim.keymap.set('n', '<leader>vh', builtin.help_tags, { desc = 'search help tags' })
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
