@@ -66,7 +66,7 @@ vim.opt.inccommand = 'split'
 vim.opt.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
-vim.opt.scrolloff = 10
+vim.opt.scrolloff = 12
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -146,12 +146,130 @@ vim.opt.rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- My plugins
+  {
+    'nvimdev/lspsaga.nvim',
+    config = function()
+      require('lspsaga').setup {}
+    end,
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter', -- optional
+      'nvim-tree/nvim-web-devicons', -- optional
+    },
+  },
+  {
+    'catppuccin/nvim',
+    name = 'catppuccin',
+    priority = 1000,
+    config = function()
+      require('catppuccin').setup()
+      vim.cmd.colorscheme 'catppuccin'
+    end,
+  },
+
+  {
+    'nvim-treesitter/nvim-treesitter',
+    build = ':TSUpdate',
+    config = function()
+      local config = require 'nvim-treesitter.configs'
+      config.setup {
+        ensure_installed = { 'lua', 'rust', 'c#' },
+        sync_install = false,
+        highlight = { enable = true },
+        indent = { enable = true },
+      }
+    end,
+  },
+
+  {
+    'ThePrimeagen/harpoon',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      local harpoon_mark = require 'harpoon.mark'
+      local harpoon_ui = require 'harpoon.ui'
+      require('harpoon').setup {
+        menu = {
+          width = vim.api.nvim_win_get_width(0) - 10,
+        },
+      }
+
+      vim.keymap.set('n', '<leader>hm', harpoon_mark.add_file, { desc = 'Harpoon mark' })
+      vim.keymap.set('n', '<leader>hl', harpoon_ui.toggle_quick_menu, { desc = 'Harpoon menu' })
+      vim.keymap.set('n', '<leader>hj', harpoon_ui.nav_next, { desc = 'Harpoon next' })
+      vim.keymap.set('n', '<leader>hk', harpoon_ui.nav_prev, { desc = 'Harpoon prev' })
+    end,
+  },
+
   'mbbill/undotree',
 
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
   'tpope/vim-fugitive', -- Detect tabstop and shiftwidth automatically
+
+  {
+    'kylechui/nvim-surround',
+    version = '*', -- Use for stability; omit to use `main` branch for the latest features
+    event = 'VeryLazy',
+    config = function()
+      require('nvim-surround').setup {
+        -- Configuration here, or leave empty to use defaults
+      }
+    end,
+  },
+
+  {
+    'Wansmer/treesj',
+    keys = { '<space>m' },
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    config = function()
+      require('treesj').setup {--[[ your config ]]
+      }
+    end,
+  },
+
+  {
+    'folke/trouble.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    opts = {
+      -- your configuration comes here
+      -- or leave it empty to use the default settings
+      -- refer to the configuration section below
+    },
+  },
+
+  {
+    'ggandor/leap.nvim',
+    dependencies = { 'tpope/vim-repeat' },
+    config = function()
+      require('leap').create_default_mappings()
+    end,
+  },
+
+  {
+    'ahmedkhalf/project.nvim',
+    config = function()
+      require('project_nvim').setup {
+        -- your configuration comes here
+        -- or leave it empty to use the default settings
+        -- refer to the configuration section below
+      }
+    end,
+  },
+
+  -- {
+  --   'Shougo/deoplete.nvim',
+  --   dependencies = { 'roxma/nvim-yarp', 'roxma/vim-hug-neovim-rpc' },
+  --   config = function()
+  --     require('deoplete').enable()
+  --   end,
+  -- },
+  -- {
+  --   'beeender/Comrade',
+  --   dependencies = { 'Shougo/deoplete.nvim' },
+  --   -- config = function()
+  --   --
+  --   -- end,
+  -- },
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
@@ -315,6 +433,10 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+
+      if vim.fn.argc() == 0 then
+        vim.cmd 'Telescope projects'
+      end
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -641,7 +763,7 @@ require('lazy').setup({
           -- Accept ([y]es) the completion.
           --  This will auto-import if your LSP supports it.
           --  This will expand snippets if the LSP sent a snippet.
-          ['<C-y>'] = cmp.mapping.confirm { select = true },
+          ['<Tab>'] = cmp.mapping.confirm { select = true },
 
           -- Manually trigger a completion from nvim-cmp.
           --  Generally you don't need this, because nvim-cmp will display
@@ -716,7 +838,7 @@ require('lazy').setup({
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
-      require('mini.surround').setup()
+      -- require('mini.surround').setup()
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
